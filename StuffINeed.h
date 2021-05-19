@@ -47,30 +47,9 @@
 @interface AVPlaybackControlsRoutePickerView : AVRoutePickerView
 @end
 
-// Should I have used properties instead of global variables?
-// Yes
-// Did I?
-// No
-// :)
-// This whole project was literally redone and has been majorly refactored many
-// times, so it's kind of a mess. If you're looking for help making a tweak, pls
-// don't try to copy what I do here :)
-// AVButton *anchorCenterItem;
-// AVButton *rewindButton;
-// AVButton *fastforwardButton;
-// AVButton *closeButton;
-// UIBlurEffect *blurEffect;
-// UIVisualEffectView *blurEffectView;
-// UIView *doubleTapToSkipAhead;
-// UIView *doubleTapToSkipBack;
-// // More actions buttons
-// AVButton *pipButton;
-// AVButton *gravityButton;
-// AVButton *airplayButton;
+// BOOL showing;
 
 @interface AVTransportControlsView : UIView
-// @property (assign, nonatomic) AVButton *skipBackButton;
-// @property (assign, nonatomic) AVButton *skipForwardButton;
 @property(assign, nonatomic) AVButton *standardPlayPauseButton;
 @property(nonatomic, readonly) AVScrubber *scrubber;
 @property(nonatomic, readonly) AVLabel *elapsedTimeLabel;
@@ -80,16 +59,15 @@
 @property(nonatomic, retain) AVButton *rewindButton;
 @property(nonatomic, retain) AVButton *fastforwardButton;
 @property(nonatomic, retain) AVButton *closeButton;
+
 @property(nonatomic, retain) UIBlurEffect *blurEffect;
 @property(nonatomic, retain) UIVisualEffectView *blurEffectView;
-@property(nonatomic, retain) UIView *doubleTapToSkipAhead;
-@property(nonatomic, retain) UIView *doubleTapToSkipBack;
+
 @property(nonatomic, retain) AVButton *pipButton;
 @property(nonatomic, retain) AVButton *gravityButton;
 @property(nonatomic, retain) AVButton *airplayButton;
 
 - (id)initWithFrame:(CGRect)arg1 styleSheet:(id)arg2;
-- (AVButton *)skipBackButton;
 - (void)_layoutDoubleRowViews;
 - (void)_layoutSingleRowViews;
 - (void)dealloc;
@@ -97,23 +75,20 @@
 // %new
 - (void)hideScrubberAndLabels;
 - (void)showScrubberAndLabels;
-// %new
 - (void)playButtonPressed;
 - (void)closeButtonPressed;
 - (void)rewindButtonPressed;
 - (void)fastforwardButtonPressed;
-- (void)toggleControls;
-- (void)rewindGestureFired;
-- (void)fastforwardGestureFired;
 - (void)pipButtonPressed;
 - (void)gravityButtonPressed;
 - (void)airplayButtonPressed;
-- (void)handleSingleTap;
 @end
 
 @interface AVPlaybackControlsView : UIView
-@property(nonatomic, readonly)
-    AVButton *videoGravityButton; // This is what I was using for the image
+// new properties
+@property(nonatomic, retain) UIBlurEffect *blurEffect;
+@property(nonatomic, retain) UIVisualEffectView *blurEffectView;
+- (id)initWithFrame:(CGRect)arg1 styleSheet:(id)arg2;
 - (void)setFullScreen:(BOOL)arg1;
 @end
 
@@ -126,5 +101,7 @@
 - (void)_handleSkipAhead15SecondsKeyCommand:(id)arg1;
 - (void)pictureInPictureButtonTapped:(id)arg1;
 - (void)videoGravityButtonTapped:(id)arg1;
+- (void)_handleSingleTapGesture:(id)arg1;
+- (void)_handleDoubleTapGesture:(id)arg1;
 - (void)dealloc;
 @end

@@ -21,13 +21,12 @@
 %property(nonatomic, retain) AVButton *rewindButton;
 %property(nonatomic, retain) AVButton *fastforwardButton;
 %property(nonatomic, retain) AVButton *closeButton;
-%property(nonatomic, retain) UIBlurEffect *blurEffect;
-%property(nonatomic, retain) UIVisualEffectView *blurEffectView;
-%property(nonatomic, retain) UIView *doubleTapToSkipAhead;
-%property(nonatomic, retain) UIView *doubleTapToSkipBack;
 %property(nonatomic, retain) AVButton *pipButton;
 %property(nonatomic, retain) AVButton *gravityButton;
 %property(nonatomic, retain) AVButton *airplayButton;
+
+%property(nonatomic, retain) UIBlurEffect *blurEffect;
+%property(nonatomic, retain) UIVisualEffectView *blurEffectView;
 
 -(id)initWithFrame:(CGRect)arg1 styleSheet:(id)arg2 {
   [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideScrubberAndLabels) name:@"hideScrubber" object:nil];
@@ -38,155 +37,114 @@
 -(void)_layoutDoubleRowViews {
   if (![self.scrubber isDescendantOfView:self]) {
 
-    // Double tap to fastforward
-    doubleTapToSkipAhead = [[UIView alloc] init];
-    doubleTapToSkipAhead.alpha = 0.1;
-    doubleTapToSkipAhead.layer.cornerCurve = kCACornerCurveContinuous;
-    doubleTapToSkipAhead.clipsToBounds = YES;
-    doubleTapToSkipAhead.layer.cornerRadius = 140;
-    doubleTapToSkipAhead.layer.maskedCorners = kCALayerMinXMinYCorner | kCALayerMinXMaxYCorner;
-    doubleTapToSkipAhead.backgroundColor = UIColor.clearColor;
-    UITapGestureRecognizer *singleTapTwo = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap)];
-    singleTapTwo.numberOfTapsRequired = 1;
-    [doubleTapToSkipAhead addGestureRecognizer:singleTapTwo];
-    UITapGestureRecognizer *doubleTapTwo = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(fastforwardGestureFired)];
-    doubleTapTwo.numberOfTapsRequired = 2;
-    [doubleTapToSkipAhead addGestureRecognizer:doubleTapTwo];
-    [singleTapTwo requireGestureRecognizerToFail:doubleTapTwo];
-    [self.superview.superview.superview addSubview:doubleTapToSkipAhead];
-    [doubleTapToSkipAhead anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.centerXAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 70, 0, 0) size:CGSizeZero];
+    self.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
+    self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:self.blurEffect];
+    self.blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
+    self.blurEffectView.userInteractionEnabled = NO;
+    [self addSubview:self.blurEffectView];
 
-    // Double tap to rewind
-    doubleTapToSkipBack = [[UIView alloc] init];
-    doubleTapToSkipBack.alpha = 0.1;
-    doubleTapToSkipBack.layer.cornerCurve = kCACornerCurveContinuous;
-    doubleTapToSkipBack.clipsToBounds = YES;
-    doubleTapToSkipBack.layer.cornerRadius = 140;
-    doubleTapToSkipBack.layer.maskedCorners = kCALayerMaxXMinYCorner | kCALayerMaxXMaxYCorner;
-    doubleTapToSkipBack.backgroundColor = UIColor.clearColor;
-    UITapGestureRecognizer *singleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap)];
-    singleTap.numberOfTapsRequired = 1;
-    [doubleTapToSkipBack addGestureRecognizer:singleTap];
-    UITapGestureRecognizer *doubleTap = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(rewindGestureFired)];
-    doubleTap.numberOfTapsRequired = 2;
-    [doubleTapToSkipBack addGestureRecognizer:doubleTap];
-    [singleTap requireGestureRecognizerToFail:doubleTap];
-    [self.superview.superview.superview addSubview:doubleTapToSkipBack];
-    [doubleTapToSkipBack anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.centerXAnchor padding:UIEdgeInsetsMake(0, 0, 0, 70) size:CGSizeZero];
-
-    // Stack ovrflow copy paste go brrr
-    if (!UIAccessibilityIsReduceTransparencyEnabled()) {
-        blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-        blurEffectView = [[UIVisualEffectView alloc] initWithEffect:blurEffect];
-        //always fill the view
-        blurEffectView.userInteractionEnabled = NO;
-        blurEffectView.frame = self.superview.superview.superview.bounds;
-        blurEffectView.autoresizingMask = UIViewAutoresizingFlexibleWidth | UIViewAutoresizingFlexibleHeight;
-        blurEffectView.alpha = 0.4f;
-        // tfw you keep adding .superview until something works :)
-        [self.superview.superview.superview insertSubview:blurEffectView atIndex:0];
-    }
+    [self.blurEffectView anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsZero size:CGSizeZero];
 
     // This is just being used to anchor the other views and can be removed, now that I shoved everything into a single class
-    anchorCenterItem = [[%c(AVButton) alloc] init]; // This was the old playPause button, before I just repurposed the old one
-    anchorCenterItem.translatesAutoresizingMaskIntoConstraints = NO;
+    self.anchorCenterItem = [[%c(AVButton) alloc] init]; // This was the old playPause button, before I just repurposed the old one
+    self.anchorCenterItem.translatesAutoresizingMaskIntoConstraints = NO;
 
     // Make the play button white
     [self.standardPlayPauseButton.imageView setTintColor:UIColor.whiteColor];
 
     // Rewind button.. pretty self explanatory
-    rewindButton = [[%c(AVButton) alloc] init];
-    [rewindButton setImage:[UIImage systemImageNamed:@"backward.fill"
-                                    withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:25
+    self.rewindButton = [[%c(AVButton) alloc] init];
+    [self.rewindButton setImage:[UIImage systemImageNamed:@"backward.fill"
+                                    withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:22
                                                                                   weight:UIImageSymbolWeightRegular
                                                                                   scale:UIImageSymbolScaleMedium]]
                                     forState:UIControlStateNormal];
-    [rewindButton addTarget:self 
+    [self.rewindButton addTarget:self 
                   action:@selector(rewindButtonPressed)
                   forControlEvents:UIControlEventTouchUpInside];
-    [rewindButton.imageView setTintColor:UIColor.whiteColor];
-    rewindButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.rewindButton.imageView setTintColor:UIColor.whiteColor];
+    self.rewindButton.translatesAutoresizingMaskIntoConstraints = NO;
 
     // This is a fastforward button
     // I learned that fastforward was spelled fastforward and not fastforeward while making this tweak :)
-    fastforwardButton = [[%c(AVButton) alloc] init];
-    [fastforwardButton setImage:[UIImage systemImageNamed:@"forward.fill"
-                                         withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:25
+    self.fastforwardButton = [[%c(AVButton) alloc] init];
+    [self.fastforwardButton setImage:[UIImage systemImageNamed:@"forward.fill"
+                                         withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:22
                                                                                         weight:UIImageSymbolWeightRegular
                                                                                         scale:UIImageSymbolScaleMedium]]
                                          forState:UIControlStateNormal]; // tfw it doesn't line up perfectly by tabbing, so you have to use spaces ;c
-    [fastforwardButton addTarget:self 
+    [self.fastforwardButton addTarget:self 
                        action:@selector(fastforwardButtonPressed)
                        forControlEvents:UIControlEventTouchUpInside];
-    [fastforwardButton.imageView setTintColor:UIColor.whiteColor];
-    fastforwardButton.translatesAutoresizingMaskIntoConstraints = NO;
+    [self.fastforwardButton.imageView setTintColor:UIColor.whiteColor];
+    self.fastforwardButton.translatesAutoresizingMaskIntoConstraints = NO;
 
-    for (UIView *view in @[anchorCenterItem, rewindButton, fastforwardButton]) [self addSubview:view];
+    for (UIView *view in @[self.anchorCenterItem, self.rewindButton, self.fastforwardButton]) [self addSubview:view];
 
     // I use self.superview.superview.superview a lot in this project, but I don't even know what it is
     // It just happened to have bounds that fit the whole screen so I used it
     // CODING 100
-    [anchorCenterItem centerInView:self.superview.superview.superview];
-    [anchorCenterItem heightWidthAnchorsEqualToSize:CGSizeMake(30, 30)];
+    [self.anchorCenterItem centerInView:self.superview.superview.superview];
+    [self.anchorCenterItem heightWidthAnchorsEqualToSize:CGSizeMake(30, 30)];
 
     // UIView extensions for constraints are pog
     // making UIs without them would be such a pain
     // feel free to steal my UIView+Constrinats.h/.m files
-    [rewindButton anchorTop:anchorCenterItem.topAnchor
+    [self.rewindButton anchorTop:self.anchorCenterItem.topAnchor
                     leading:nil
-                    bottom:anchorCenterItem.bottomAnchor
-                  trailing:anchorCenterItem.leadingAnchor
-                    padding:UIEdgeInsetsMake(0, 0, 0, 20)
+                    bottom:self.anchorCenterItem.bottomAnchor
+                  trailing:self.anchorCenterItem.leadingAnchor
+                    padding:UIEdgeInsetsMake(0, 0, 0, 25)
                       size:CGSizeMake(30, 30)];
 
-    [fastforwardButton anchorTop:anchorCenterItem.topAnchor
-                        leading:anchorCenterItem.trailingAnchor
-                          bottom:anchorCenterItem.bottomAnchor
+    [self.fastforwardButton anchorTop:self.anchorCenterItem.topAnchor
+                        leading:self.anchorCenterItem.trailingAnchor
+                          bottom:self.anchorCenterItem.bottomAnchor
                         trailing:nil
-                        padding:UIEdgeInsetsMake(0, 20, 0, 0)
+                        padding:UIEdgeInsetsMake(0, 25, 0, 0)
                             size:CGSizeMake(30, 30)];
 
-    pipButton = [[%c(AVButton) alloc] init];
-    [pipButton setImage:[UIImage systemImageNamed:@"pip" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
-    [pipButton.imageView setTintColor:UIColor.whiteColor];
-    [pipButton addTarget:self 
+    self.pipButton = [[%c(AVButton) alloc] init];
+    [self.pipButton setImage:[UIImage systemImageNamed:@"pip" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.pipButton.imageView setTintColor:UIColor.whiteColor];
+    [self.pipButton addTarget:self 
                action:@selector(pipButtonPressed)
                forControlEvents:UIControlEventTouchUpInside];
-    pipButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.pipButton.translatesAutoresizingMaskIntoConstraints = NO;
 
     // why did apple call this gravity
     // what does the video size have to do with gravity
     // if someone knows, pls explain
-    gravityButton = [[%c(AVButton) alloc] init]; // person.crop.rectangle lol
-    [gravityButton setImage:[UIImage systemImageNamed:@"person.crop.rectangle" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
-    [gravityButton.imageView setTintColor:UIColor.whiteColor];
-    [gravityButton addTarget:self 
+    self.gravityButton = [[%c(AVButton) alloc] init]; // person.crop.rectangle lol
+    [self.gravityButton setImage:[UIImage systemImageNamed:@"person.crop.rectangle" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.gravityButton.imageView setTintColor:UIColor.whiteColor];
+    [self.gravityButton addTarget:self 
                    action:@selector(gravityButtonPressed)
                    forControlEvents:UIControlEventTouchUpInside];
-    gravityButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.gravityButton.translatesAutoresizingMaskIntoConstraints = NO;
 
-    airplayButton = [[%c(AVButton) alloc] init];
-    [airplayButton setImage:[UIImage systemImageNamed:@"airplayvideo" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
-    [airplayButton.imageView setTintColor:UIColor.whiteColor];
-    [airplayButton addTarget:self 
+    self.airplayButton = [[%c(AVButton) alloc] init];
+    [self.airplayButton setImage:[UIImage systemImageNamed:@"airplayvideo" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.airplayButton.imageView setTintColor:UIColor.whiteColor];
+    [self.airplayButton addTarget:self 
                    action:@selector(airplayButtonPressed)
                    forControlEvents:UIControlEventTouchUpInside];
-    airplayButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.airplayButton.translatesAutoresizingMaskIntoConstraints = NO;
 
-    closeButton = [[%c(AVButton) alloc] init];
-    [closeButton setImage:[UIImage systemImageNamed:@"xmark" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
-    [closeButton.imageView setTintColor:UIColor.whiteColor];
-    [closeButton addTarget:self 
+    self.closeButton = [[%c(AVButton) alloc] init];
+    [self.closeButton setImage:[UIImage systemImageNamed:@"xmark" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.closeButton.imageView setTintColor:UIColor.whiteColor];
+    [self.closeButton addTarget:self 
                  action:@selector(closeButtonPressed)
                  forControlEvents:UIControlEventTouchUpInside];
-    closeButton.translatesAutoresizingMaskIntoConstraints = NO;
+    self.closeButton.translatesAutoresizingMaskIntoConstraints = NO;
 
-    for (UIView *view in @[pipButton, closeButton, airplayButton, gravityButton]) [self addSubview:view];
+    for (UIView *view in @[self.pipButton, self.closeButton, self.airplayButton, self.gravityButton]) [self addSubview:view];
 
-    [pipButton anchorTop:self.superview.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(15, 0, 15, 15) size:CGSizeMake(40, 40)];
-    [gravityButton anchorTop:self.superview.superview.superview.topAnchor leading:nil bottom:nil trailing:pipButton.leadingAnchor padding:UIEdgeInsetsMake(15, 0, 15, 15) size:CGSizeMake(40, 40)];
-    [airplayButton anchorTop:self.superview.superview.superview.topAnchor leading:nil bottom:nil trailing:gravityButton.leadingAnchor padding:UIEdgeInsetsMake(15, 0, 15, 15) size:CGSizeMake(40, 40)];
-    [closeButton anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:nil trailing:nil padding:UIEdgeInsetsMake(15, 15, 15, 0) size:CGSizeMake(40, 40)];
+    [self.pipButton anchorTop:self.superview.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(15, 0, 15, 15) size:CGSizeMake(40, 40)];
+    [self.gravityButton anchorTop:self.superview.superview.superview.topAnchor leading:nil bottom:nil trailing:self.pipButton.leadingAnchor padding:UIEdgeInsetsMake(15, 0, 15, 15) size:CGSizeMake(40, 40)];
+    [self.airplayButton anchorTop:self.superview.superview.superview.topAnchor leading:nil bottom:nil trailing:self.gravityButton.leadingAnchor padding:UIEdgeInsetsMake(15, 0, 15, 15) size:CGSizeMake(40, 40)];
+    [self.closeButton anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:nil trailing:nil padding:UIEdgeInsetsMake(15, 15, 15, 0) size:CGSizeMake(40, 40)];
 
     [self addSubview:self.scrubber];
     [self addSubview:self.elapsedTimeLabel];
@@ -199,7 +157,7 @@
                    leading:self.leadingAnchor
                    bottom:self.bottomAnchor
                    trailing:self.trailingAnchor
-                   padding:UIEdgeInsetsMake(0, 10, 3, 10)
+                   padding:UIEdgeInsetsMake(0, 10, 0, 10)
                    size:CGSizeMake(0,40)];
     [self.elapsedTimeLabel anchorTop:nil 
                            leading:self.scrubber.leadingAnchor 
@@ -216,18 +174,18 @@
     [self.elapsedTimeLabel.label setTextAlignment:NSTextAlignmentLeft];
     [self.timeRemainingLabel.label setTextAlignment:NSTextAlignmentRight];
 
-    anchorCenterItem.alpha = 0;
-    rewindButton.alpha = 1;
-    fastforwardButton.alpha = 1;
-    closeButton.alpha = 1;
-    airplayButton.alpha = 1;
-    pipButton.alpha = 1;
-    gravityButton.alpha = 1;
-    blurEffectView.alpha = 0.4f;
+    self.anchorCenterItem.alpha = 0;
+    self.rewindButton.alpha = 1;
+    self.fastforwardButton.alpha = 1;
+    self.closeButton.alpha = 1;
+    self.airplayButton.alpha = 1;
+    self.pipButton.alpha = 1;
+    self.gravityButton.alpha = 1;
     self.scrubber.alpha = 1;
     self.elapsedTimeLabel.alpha = 1;
     self.timeRemainingLabel.alpha = 1;
-    // [self showScrubberAndLabels]; Testing whether I need this here or not
+    self.blurEffectView.alpha = 0.4f;
+
   }
 }
 -(void)_layoutSingleRowViews {
@@ -236,42 +194,7 @@
   [self _layoutDoubleRowViews]; // This is here in case I start the video in landscape
   // The lack of %orig is so that the old views don't appear
 }
-%new
--(void)hideScrubberAndLabels {
-  [UIView animateWithDuration:0.2
-          animations:^{
-            self.scrubber.alpha = 0;
-            self.elapsedTimeLabel.alpha = 0;
-            self.timeRemainingLabel.alpha = 0;
-            self.standardPlayPauseButton.alpha = 0;
 
-            closeButton.alpha = 0;
-            airplayButton.alpha = 0;
-            pipButton.alpha = 0;
-            gravityButton.alpha = 0;
-            rewindButton.alpha = 0;
-            fastforwardButton.alpha = 0;
-            blurEffectView.alpha = 0;
-          }];
-}
-%new
--(void)showScrubberAndLabels {
-  [UIView animateWithDuration:0.2
-          animations:^{
-            self.scrubber.alpha = 1;
-            self.elapsedTimeLabel.alpha = 1;
-            self.timeRemainingLabel.alpha = 1;
-            self.standardPlayPauseButton.alpha = 1;
-
-            closeButton.alpha = 1;
-            airplayButton.alpha = 1;
-            pipButton.alpha = 1;
-            gravityButton.alpha = 1;
-            rewindButton.alpha = 1;
-            fastforwardButton.alpha = 1;
-            blurEffectView.alpha = 0.4f;
-          }];
-}
 %new
 -(void)closeButtonPressed {
   [[NSNotificationCenter defaultCenter] postNotificationName:@"doneButtonFromCustomButton" object:self];
@@ -285,14 +208,6 @@
   [[NSNotificationCenter defaultCenter] postNotificationName:@"skipAhead" object:self];
 }
 %new
--(void)rewindGestureFired {
-  [self rewindButtonPressed];
-}
-%new
--(void)fastforwardGestureFired {
-  [self fastforwardButtonPressed];
-}
-%new
 -(void)pipButtonPressed {
   [[NSNotificationCenter defaultCenter] postNotificationName:@"pipButton" object:self];
 }
@@ -303,21 +218,6 @@
 %new
 -(void)airplayButtonPressed {
   [[NSNotificationCenter defaultCenter] postNotificationName:@"airplayButton" object:self];
-}
-// This is called when you tap on one of the doubleTapGestureViews on either side of the video player
-%new
--(void)handleSingleTap {
-  NSLog(@"handleSingleTap ran");
-  // if (self.standardPlayPauseButton.alpha == 1) {
-  //   [self hideScrubberAndLabels];
-  // } else {
-  //   [self showScrubberAndLabels];
-  // }
-  if (self.standardPlayPauseButton.alpha == 1) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"hideScrubber" object:self];
-  } else {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"showScrubber" object:self];
-  }
 }
 -(void)dealloc {
 	%orig;
@@ -365,12 +265,24 @@
   // NSLog(@"videoGravityButtonTapped");
   %orig;
 }
+// I don't think I need this here :)
 -(void)_handleSingleTapGesture:(id)arg1 {
   %orig;
-  if (blurEffectView.alpha == 1) {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"hideScrubber" object:self];
-  } else {
-    [[NSNotificationCenter defaultCenter] postNotificationName:@"showScrubber" object:self];
+}
+-(void)_handleDoubleTapGesture:(UITapGestureRecognizer *)arg1 {
+  // This handles the rewind/fastforward double tap gesture
+  // It just checks which side of the screen the touch point came from
+
+  if (arg1.state == UIGestureRecognizerStateEnded) {
+    CGPoint point = [arg1 locationInView:self.view.superview.superview.superview];
+    CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
+    if (point.x < (screenWidth/2)) {
+      // Left
+      [self _handleSkipBack15SecondsKeyCommand:nil];
+    } else {
+      // Right
+      [self _handleSkipAhead15SecondsKeyCommand:nil];
+    }
   }
 }
 -(void)dealloc {
