@@ -179,7 +179,6 @@
     self.scrubber.alpha = 1;
     self.elapsedTimeLabel.alpha = 1;
     self.timeRemainingLabel.alpha = 1;
-    // self.blurEffectView.alpha = 0.4f;
     self.darkOverlay.alpha = 0.4f;
 
   }
