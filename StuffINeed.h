@@ -59,9 +59,7 @@
 @property(nonatomic, retain) AVButton *rewindButton;
 @property(nonatomic, retain) AVButton *fastforwardButton;
 @property(nonatomic, retain) AVButton *closeButton;
-
-@property(nonatomic, retain) UIBlurEffect *blurEffect;
-@property(nonatomic, retain) UIVisualEffectView *blurEffectView;
+@property(nonatomic, retain) UIView *darkOverlay;
 
 @property(nonatomic, retain) AVButton *pipButton;
 @property(nonatomic, retain) AVButton *gravityButton;

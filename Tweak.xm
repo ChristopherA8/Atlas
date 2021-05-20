@@ -27,26 +27,18 @@
 %property(nonatomic, retain) AVButton *pipButton;
 %property(nonatomic, retain) AVButton *gravityButton;
 %property(nonatomic, retain) AVButton *airplayButton;
-
-%property(nonatomic, retain) UIBlurEffect *blurEffect;
-%property(nonatomic, retain) UIVisualEffectView *blurEffectView;
-
--(id)initWithFrame:(CGRect)arg1 styleSheet:(id)arg2 {
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(hideScrubberAndLabels) name:@"hideScrubber" object:nil];
-  [[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(showScrubberAndLabels) name:@"showScrubber" object:nil];
-  return %orig;
-}
+%property(nonatomic, retain) UIView *darkOverlay;
 
 -(void)_layoutDoubleRowViews {
   if (![self.scrubber isDescendantOfView:self]) {
 
-    self.blurEffect = [UIBlurEffect effectWithStyle:UIBlurEffectStyleDark];
-    self.blurEffectView = [[UIVisualEffectView alloc] initWithEffect:self.blurEffect];
-    self.blurEffectView.translatesAutoresizingMaskIntoConstraints = NO;
-    self.blurEffectView.userInteractionEnabled = NO;
-    [self addSubview:self.blurEffectView];
+    self.darkOverlay = [[UIView alloc] init];
+    self.darkOverlay.translatesAutoresizingMaskIntoConstraints = NO;
+    self.darkOverlay.userInteractionEnabled = NO;
+    self.darkOverlay.backgroundColor = UIColor.blackColor;
+    [self addSubview:self.darkOverlay];
 
-    [self.blurEffectView anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsZero size:CGSizeZero];
+    [self.darkOverlay anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsZero size:CGSizeZero];
 
     // This is just being used to anchor the other views and can be removed, now that I shoved everything into a single class
     self.anchorCenterItem = [[%c(AVButton) alloc] init]; // This was the old playPause button, before I just repurposed the old one
@@ -144,10 +136,10 @@
 
     for (UIView *view in @[self.pipButton, self.closeButton, self.airplayButton, self.gravityButton]) [self addSubview:view];
 
-    [self.pipButton anchorTop:self.superview.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(15, 0, 15, 15) size:CGSizeMake(40, 40)];
-    [self.gravityButton anchorTop:self.superview.superview.superview.topAnchor leading:nil bottom:nil trailing:self.pipButton.leadingAnchor padding:UIEdgeInsetsMake(15, 0, 15, 15) size:CGSizeMake(40, 40)];
-    [self.airplayButton anchorTop:self.superview.superview.superview.topAnchor leading:nil bottom:nil trailing:self.gravityButton.leadingAnchor padding:UIEdgeInsetsMake(15, 0, 15, 15) size:CGSizeMake(40, 40)];
-    [self.closeButton anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:nil trailing:nil padding:UIEdgeInsetsMake(15, 15, 15, 0) size:CGSizeMake(40, 40)];
+    [self.pipButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+    [self.gravityButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.pipButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+    [self.airplayButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.gravityButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+    [self.closeButton anchorTop:self.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:nil trailing:nil padding:UIEdgeInsetsMake(0, 15, 15, 0) size:CGSizeMake(40, 40)];
 
     [self addSubview:self.scrubber];
     [self addSubview:self.elapsedTimeLabel];
@@ -187,7 +179,8 @@
     self.scrubber.alpha = 1;
     self.elapsedTimeLabel.alpha = 1;
     self.timeRemainingLabel.alpha = 1;
-    self.blurEffectView.alpha = 0.4f;
+    // self.blurEffectView.alpha = 0.4f;
+    self.darkOverlay.alpha = 0.4f;
 
   }
 }
@@ -197,7 +190,6 @@
   [self _layoutDoubleRowViews]; // This is here in case I start the video in landscape
   // The lack of %orig is so that the old views don't appear
 }
-
 %new
 -(void)closeButtonPressed {
   [[NSNotificationCenter defaultCenter] postNotificationName:@"doneButtonFromCustomButton" object:self];
@@ -225,6 +217,14 @@
 -(void)dealloc {
 	%orig;
 	[[NSNotificationCenter defaultCenter] removeObserver:self];
+}
+%end
+
+%hook AVLabel
+-(UILabel *)label {
+  UILabel *whiteLabel = %orig;
+  whiteLabel.textColor = [UIColor colorWithRed:1.00 green:1.00 blue:1.00 alpha:1.00];
+  return whiteLabel;
 }
 %end
 
@@ -282,9 +282,11 @@
     if (point.x < (screenWidth/2)) {
       // Left
       [self _handleSkipBack15SecondsKeyCommand:nil];
+      // Show the -10
     } else {
       // Right
       [self _handleSkipAhead15SecondsKeyCommand:nil];
+      // Show the +10
     }
   }
 }
