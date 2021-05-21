@@ -14,6 +14,13 @@
 //
 // anyways
 
+#import <Cephei/HBPreferences.h>
+
+HBPreferences *preferences;
+BOOL enabled;
+BOOL gestureEnabled;
+BOOL animEnabled;
+
 #import "UIView+Constraints.h"
 #import <AVFoundation/AVFoundation.h>
 
@@ -54,6 +61,9 @@
 @property(nonatomic, readonly) AVScrubber *scrubber;
 @property(nonatomic, readonly) AVLabel *elapsedTimeLabel;
 @property(nonatomic, readonly) AVLabel *timeRemainingLabel;
+@property(nonatomic, readonly) AVLabel *liveBroadcastLabel;
+@property(assign, nonatomic) BOOL showsLiveStreamingControls;
+@property(assign, nonatomic) BOOL liveStreamingControlsIncludeScrubber;
 
 @property(nonatomic, retain) AVButton *anchorCenterItem;
 @property(nonatomic, retain) AVButton *rewindButton;

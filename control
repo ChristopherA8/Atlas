@@ -1,10 +1,10 @@
 Package: com.chr1s.atlas
 Name: Atlas
-Version: 1.0.0-beta3
+Version: 1.0.0-beta4
 Architecture: iphoneos-arm
 Description: Minimal video player replacement
 Maintainer: Chr1s
 Author: Chr1s
 Icon: https://chr1s.dev/assets/atlasRound.png
 Section: Tweaks
-Depends: mobilesubstrate (>= 0.9.5000)
+Depends: mobilesubstrate (>= 0.9.5000), preferenceloader, ws.hbang.common (>= 1.15.1)

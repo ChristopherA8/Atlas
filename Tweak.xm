@@ -1,5 +1,7 @@
 #import "StuffINeed.h"
 
+%group Atlas
+
 // Try overriding the hidden getter for these methods
 // Instead of using layoutSubviews :)
 
@@ -155,6 +157,7 @@
     [self addSubview:self.elapsedTimeLabel];
     [self addSubview:self.timeRemainingLabel];
     [self addSubview:self.standardPlayPauseButton];
+    [self addSubview:self.liveBroadcastLabel];
     self.standardPlayPauseButton.translatesAutoresizingMaskIntoConstraints = NO;
     [self.standardPlayPauseButton centerInView:self.superview.superview.superview];
     [self.standardPlayPauseButton heightWidthAnchorsEqualToSize:CGSizeMake(30, 30)];
@@ -169,13 +172,19 @@
                            bottom:self.scrubber.topAnchor
                            trailing:nil
                            padding:UIEdgeInsetsMake(0, 0, 0, 0)
-                           size:CGSizeMake(40,20)];
+                           size:CGSizeMake(80,20)];
     [self.timeRemainingLabel anchorTop:nil 
                              leading:nil
                              bottom:self.scrubber.topAnchor
                              trailing:self.scrubber.trailingAnchor
           padding:UIEdgeInsetsMake(0, 0, 0, 0)
-              size:CGSizeMake(40,20)];
+              size:CGSizeMake(80,20)];
+    [self.liveBroadcastLabel anchorTop:nil 
+                             leading:self.leadingAnchor
+                             bottom:self.bottomAnchor
+                             trailing:self.trailingAnchor
+                             padding:UIEdgeInsetsMake(0, 10, 0, 10)
+                             size:CGSizeMake(0,40)];
     [self.elapsedTimeLabel.label setTextAlignment:NSTextAlignmentLeft];
     [self.timeRemainingLabel.label setTextAlignment:NSTextAlignmentRight];
 
@@ -186,7 +195,7 @@
     [self.numberView anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsZero size:CGSizeZero];
 
     self.leftNumber = [UILabel new];
-    self.leftNumber.font = [UIFont boldSystemFontOfSize:30];
+    self.leftNumber.font = [UIFont boldSystemFontOfSize:20];
     self.leftNumber.userInteractionEnabled = NO;
     self.leftNumber.text = @"-15";
     self.leftNumber.textColor = UIColor.whiteColor;
@@ -195,13 +204,21 @@
     [self.leftNumber anchorTop:self.numberView.topAnchor leading:self.numberView.leadingAnchor bottom:self.numberView.bottomAnchor trailing:nil padding:UIEdgeInsetsMake(0,40,0,0) size:CGSizeMake(80, 0)];
 
     self.rightNumber = [UILabel new];
-    self.rightNumber.font = [UIFont boldSystemFontOfSize:30];
+    self.rightNumber.font = [UIFont boldSystemFontOfSize:20];
     self.rightNumber.userInteractionEnabled = NO;
     self.rightNumber.text = @"+15";
     self.rightNumber.textColor = UIColor.whiteColor;
     [self.rightNumber setTextAlignment:NSTextAlignmentRight];
     [self.numberView addSubview:self.rightNumber];
     [self.rightNumber anchorTop:self.numberView.topAnchor leading:nil bottom:self.numberView.bottomAnchor trailing:self.numberView.trailingAnchor padding:UIEdgeInsetsMake(0,0,0,40) size:CGSizeMake(80, 0)];
+
+    // If we're livestreaming, don't show the slider controls
+    if (!self.showsLiveStreamingControls) {
+      self.scrubber.alpha = 0;
+      self.elapsedTimeLabel.alpha = 0;
+      self.timeRemainingLabel.alpha = 0;
+      self.liveBroadcastLabel.alpha = 1;
+    }
 
     self.anchorCenterItem.alpha = 0;
     self.rewindButton.alpha = 1;
@@ -215,6 +232,7 @@
     self.timeRemainingLabel.alpha = 1;
     self.darkOverlay.alpha = 0.4f;
     self.numberView.alpha = 1;
+    self.liveBroadcastLabel.alpha = 0;
 
     self.leftNumber.alpha = 0;
     self.rightNumber.alpha = 0;
@@ -367,6 +385,8 @@
   %orig;
 }
 -(void)_handleDoubleTapGesture:(UITapGestureRecognizer *)arg1 {
+
+  if (!gestureEnabled) return;
   // This handles the rewind/fastforward double tap gesture
   // It just checks which side of the screen the touch point came from
 
@@ -376,13 +396,13 @@
     if (point.x < (screenWidth/2)) {
       // Left
       [self _handleSkipBack15SecondsKeyCommand:nil];
-      // Show the -10
-      [[NSNotificationCenter defaultCenter] postNotificationName:@"leftGesture" object:self];
+      // Show the -15
+      if (animEnabled) [[NSNotificationCenter defaultCenter] postNotificationName:@"leftGesture" object:self];
     } else {
       // Right
       [self _handleSkipAhead15SecondsKeyCommand:nil];
-      // Show the +10
-      [[NSNotificationCenter defaultCenter] postNotificationName:@"rightGesture" object:self];
+      // Show the +15
+      if (animEnabled) [[NSNotificationCenter defaultCenter] postNotificationName:@"rightGesture" object:self];
     }
   }
 }
@@ -392,8 +412,17 @@
 }
 %end
 
+%end
+
 
 // This is here as a sanity check, so I know if I spelled the dylib path correctly in the console search bar
 %ctor {
+  preferences = [[HBPreferences alloc] initWithIdentifier:@"com.chr1s.atlasprefs"];
+  [preferences registerBool:&enabled default:YES forKey:@"enabled"];
+  [preferences registerBool:&gestureEnabled default:YES forKey:@"gestureEnabled"];
+  [preferences registerBool:&animEnabled default:YES forKey:@"animEnabled"];
+  if (enabled) {
+    %init(Atlas);
+  }
   NSLog(@"custom player loaded");
 }
