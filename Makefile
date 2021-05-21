@@ -4,10 +4,10 @@ ARCHS = arm64 arm64e
 
 include $(THEOS)/makefiles/common.mk
 
-TWEAK_NAME = YoutubePlayer
+TWEAK_NAME = Atlas
 
-YoutubePlayer_FILES = $(wildcard *.xm *.m)
-YoutubePlayer_FRAMEWORKS = AVFoundation
-YoutubePlayer_CFLAGS = -fobjc-arc
+$(TWEAK_NAME)_FILES = $(wildcard *.xm *.m)
+$(TWEAK_NAME)_FRAMEWORKS = AVFoundation
+$(TWEAK_NAME)_CFLAGS = -fobjc-arc
 
 include $(THEOS_MAKE_PATH)/tweak.mk
