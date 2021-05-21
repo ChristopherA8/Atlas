@@ -260,6 +260,8 @@
   }
   CGRect frame = self.leftNumber.frame;
   [UIView animateWithDuration:0.3
+          delay:0
+          options:UIViewAnimationOptionCurveEaseOut
           animations:^{
             self.leftNumber.alpha = 1;
             if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)) {
