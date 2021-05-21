@@ -65,6 +65,10 @@
 @property(nonatomic, retain) AVButton *gravityButton;
 @property(nonatomic, retain) AVButton *airplayButton;
 
+@property (nonatomic, retain) UIView *numberView;
+@property (nonatomic, retain) UILabel *leftNumber;
+@property (nonatomic, retain) UILabel *rightNumber;
+
 - (id)initWithFrame:(CGRect)arg1 styleSheet:(id)arg2;
 - (void)_layoutDoubleRowViews;
 - (void)_layoutSingleRowViews;
@@ -80,6 +84,9 @@
 - (void)pipButtonPressed;
 - (void)gravityButtonPressed;
 - (void)airplayButtonPressed;
+
+-(void)leftGesture;
+-(void)rightGesture;
 @end
 
 @interface AVPlaybackControlsView : UIView

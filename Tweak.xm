@@ -29,6 +29,16 @@
 %property(nonatomic, retain) AVButton *airplayButton;
 %property(nonatomic, retain) UIView *darkOverlay;
 
+%property (nonatomic, retain) UIView *numberView;
+%property (nonatomic, retain) UILabel *leftNumber;
+%property (nonatomic, retain) UILabel *rightNumber;
+
+- (id)initWithFrame:(CGRect)arg1 styleSheet:(id)arg2 {
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(leftGesture) name:@"leftGesture" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(rightGesture) name:@"rightGesture" object:nil];
+  return %orig;
+}
+
 -(void)_layoutDoubleRowViews {
   if (![self.scrubber isDescendantOfView:self]) {
 
@@ -169,6 +179,30 @@
     [self.elapsedTimeLabel.label setTextAlignment:NSTextAlignmentLeft];
     [self.timeRemainingLabel.label setTextAlignment:NSTextAlignmentRight];
 
+    self.numberView = [[UIView alloc] init];
+    self.numberView.userInteractionEnabled = NO;
+    self.numberView.backgroundColor = UIColor.clearColor;
+    [self addSubview:self.numberView];
+    [self.numberView anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsZero size:CGSizeZero];
+
+    self.leftNumber = [UILabel new];
+    self.leftNumber.font = [UIFont boldSystemFontOfSize:30];
+    self.leftNumber.userInteractionEnabled = NO;
+    self.leftNumber.text = @"-15";
+    self.leftNumber.textColor = UIColor.whiteColor;
+    [self.leftNumber setTextAlignment:NSTextAlignmentLeft];
+    [self.numberView addSubview:self.leftNumber];
+    [self.leftNumber anchorTop:self.numberView.topAnchor leading:self.numberView.leadingAnchor bottom:self.numberView.bottomAnchor trailing:nil padding:UIEdgeInsetsMake(0,40,0,0) size:CGSizeMake(80, 0)];
+
+    self.rightNumber = [UILabel new];
+    self.rightNumber.font = [UIFont boldSystemFontOfSize:30];
+    self.rightNumber.userInteractionEnabled = NO;
+    self.rightNumber.text = @"+15";
+    self.rightNumber.textColor = UIColor.whiteColor;
+    [self.rightNumber setTextAlignment:NSTextAlignmentRight];
+    [self.numberView addSubview:self.rightNumber];
+    [self.rightNumber anchorTop:self.numberView.topAnchor leading:nil bottom:self.numberView.bottomAnchor trailing:self.numberView.trailingAnchor padding:UIEdgeInsetsMake(0,0,0,40) size:CGSizeMake(80, 0)];
+
     self.anchorCenterItem.alpha = 0;
     self.rewindButton.alpha = 1;
     self.fastforwardButton.alpha = 1;
@@ -180,6 +214,10 @@
     self.elapsedTimeLabel.alpha = 1;
     self.timeRemainingLabel.alpha = 1;
     self.darkOverlay.alpha = 0.4f;
+    self.numberView.alpha = 1;
+
+    self.leftNumber.alpha = 0;
+    self.rightNumber.alpha = 0;
 
   }
 }
@@ -212,6 +250,61 @@
 %new
 -(void)airplayButtonPressed {
   [[NSNotificationCenter defaultCenter] postNotificationName:@"airplayButton" object:self];
+}
+%new
+-(void)leftGesture {
+  if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+    self.leftNumber.font = [UIFont boldSystemFontOfSize:20];
+  } else {
+    self.leftNumber.font = [UIFont boldSystemFontOfSize:30];
+  }
+  CGRect frame = self.leftNumber.frame;
+  [UIView animateWithDuration:0.3
+          animations:^{
+            self.leftNumber.alpha = 1;
+            if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)) {
+              self.leftNumber.frame = CGRectMake(frame.origin.x + 15, frame.origin.y, frame.size.width, frame.size.height);
+            } else {
+              self.leftNumber.frame = CGRectMake(frame.origin.x + 8, frame.origin.y, frame.size.width, frame.size.height);
+            }
+          }
+          completion:^(BOOL finished){
+            [UIView animateWithDuration:0.2
+                    animations:^{
+                      self.leftNumber.alpha = 0;
+                    }
+                    completion:^(BOOL finished){
+                      self.leftNumber.frame = frame;
+                    }];
+          }];
+}
+%new
+-(void)rightGesture {
+  if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+    self.rightNumber.font = [UIFont boldSystemFontOfSize:20];
+  } else {
+    self.rightNumber.font = [UIFont boldSystemFontOfSize:30];
+  }
+  CGRect frame = self.rightNumber.frame;
+  [UIView animateWithDuration:0.3
+          delay:0
+          options:UIViewAnimationOptionCurveEaseOut
+          animations:^{
+            self.rightNumber.alpha = 1;
+            if (UIDeviceOrientationIsLandscape([UIDevice currentDevice].orientation)) {
+              self.rightNumber.frame = CGRectMake(frame.origin.x - 15, frame.origin.y, frame.size.width, frame.size.height);
+            } else {
+              self.rightNumber.frame = CGRectMake(frame.origin.x - 8, frame.origin.y, frame.size.width, frame.size.height);
+            }          }
+          completion:^(BOOL finished){
+            [UIView animateWithDuration:0.2
+                    animations:^{
+                      self.rightNumber.alpha = 0;
+                    }
+                    completion:^(BOOL finished){
+                      self.rightNumber.frame = frame;
+                    }];
+          }];
 }
 -(void)dealloc {
 	%orig;
@@ -282,10 +375,12 @@
       // Left
       [self _handleSkipBack15SecondsKeyCommand:nil];
       // Show the -10
+      [[NSNotificationCenter defaultCenter] postNotificationName:@"leftGesture" object:self];
     } else {
       // Right
       [self _handleSkipAhead15SecondsKeyCommand:nil];
       // Show the +10
+      [[NSNotificationCenter defaultCenter] postNotificationName:@"rightGesture" object:self];
     }
   }
 }
