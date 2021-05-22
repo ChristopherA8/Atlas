@@ -1,3 +1,5 @@
 # Atlas
+
 Minimal stock video player replacement
-https://www.youtube.com/watch?v=Ls53Fd2vUac
+
+[demo video](https://www.youtube.com/watch?v=Ls53Fd2vUac)
