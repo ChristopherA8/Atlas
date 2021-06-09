@@ -2,9 +2,6 @@
 
 %group Atlas
 
-// Try overriding the hidden getter for these methods
-// Instead of using layoutSubviews :)
-
 // Hide the background blur around the old buttons
 %hook AVCABackdropLayerView
 -(void)layoutSubviews {
