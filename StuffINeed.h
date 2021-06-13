@@ -1,18 +1,4 @@
-// Good coding practices 101
-//
-// Name your headers something useful
-// Instead of Headers.h
-// Why not try calling it "ThingsThatMakeMyCodeWork.h"
-// Or "LimenosSiteIsSlow.h"
-// These names have true meaning and will help you
-// Especially when looking back at your code in the future
-//
-//
-// :)
-//
-//
-//
-// anyways
+// Yes this is called StuffINeed.h
 
 #import <Cephei/HBPreferences.h>
 
@@ -20,6 +6,10 @@ HBPreferences *preferences;
 BOOL enabled;
 BOOL gestureEnabled;
 BOOL animEnabled;
+
+NSInteger buttonOneStyle = 2;
+NSInteger buttonTwoStyle = 1;
+NSInteger buttonThreeStyle = 3;
 
 #import "UIView+Constraints.h"
 #import <AVFoundation/AVFoundation.h>
@@ -74,6 +64,17 @@ BOOL animEnabled;
 @property(nonatomic, retain) AVButton *pipButton;
 @property(nonatomic, retain) AVButton *gravityButton;
 @property(nonatomic, retain) AVButton *airplayButton;
+@property(nonatomic, retain) AVButton *orientationButton;
+
+@property(nonatomic, retain) AVButton *pipButton2;
+@property(nonatomic, retain) AVButton *gravityButton2;
+@property(nonatomic, retain) AVButton *airplayButton2;
+@property(nonatomic, retain) AVButton *orientationButton2;
+
+@property(nonatomic, retain) AVButton *pipButton3;
+@property(nonatomic, retain) AVButton *gravityButton3;
+@property(nonatomic, retain) AVButton *airplayButton3;
+@property(nonatomic, retain) AVButton *orientationButton3;
 
 @property (nonatomic, retain) UIView *numberView;
 @property (nonatomic, retain) UILabel *leftNumber;
@@ -94,6 +95,7 @@ BOOL animEnabled;
 - (void)pipButtonPressed;
 - (void)gravityButtonPressed;
 - (void)airplayButtonPressed;
+- (void)orientationButtonPressed:(UIButton *)sender;
 
 -(void)leftGesture;
 -(void)rightGesture;
@@ -119,4 +121,13 @@ BOOL animEnabled;
 - (void)_handleSingleTapGesture:(id)arg1;
 - (void)_handleDoubleTapGesture:(id)arg1;
 - (void)dealloc;
+@end
+
+// Orientation Lock
+@interface SBOrientationLockManager
++(instancetype)sharedInstance;
+-(id)description;
+-(BOOL)isUserLocked;
+-(void)lock;
+-(void)unlock;
 @end

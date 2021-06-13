@@ -1,5 +1,13 @@
 #import "StuffINeed.h"
 
+void toggleOrientationLock() {
+    if ([[%c(SBOrientationLockManager) sharedInstance] isUserLocked]) {
+        [[%c(SBOrientationLockManager) sharedInstance] unlock];
+    } else {
+        [[%c(SBOrientationLockManager) sharedInstance] lock];
+    }
+}
+
 %group Atlas
 
 // Hide the background blur around the old buttons
@@ -23,11 +31,23 @@
 %property(nonatomic, retain) AVButton *rewindButton;
 %property(nonatomic, retain) AVButton *fastforwardButton;
 %property(nonatomic, retain) AVButton *closeButton;
+
 %property(nonatomic, retain) AVButton *pipButton;
 %property(nonatomic, retain) AVButton *gravityButton;
 %property(nonatomic, retain) AVButton *airplayButton;
-%property(nonatomic, retain) UIView *darkOverlay;
+%property(nonatomic, retain) AVButton *orientationButton;
 
+%property(nonatomic, retain) AVButton *pipButton2;
+%property(nonatomic, retain) AVButton *gravityButton2;
+%property(nonatomic, retain) AVButton *airplayButton2;
+%property(nonatomic, retain) AVButton *orientationButton2;
+
+%property(nonatomic, retain) AVButton *pipButton3;
+%property(nonatomic, retain) AVButton *gravityButton3;
+%property(nonatomic, retain) AVButton *airplayButton3;
+%property(nonatomic, retain) AVButton *orientationButton3;
+
+%property(nonatomic, retain) UIView *darkOverlay;
 %property (nonatomic, retain) UIView *numberView;
 %property (nonatomic, retain) UILabel *leftNumber;
 %property (nonatomic, retain) UILabel *rightNumber;
@@ -116,16 +136,45 @@
                forControlEvents:UIControlEventTouchUpInside];
     self.pipButton.translatesAutoresizingMaskIntoConstraints = NO;
 
-    // why did apple call this gravity
-    // what does the video size have to do with gravity
-    // if someone knows, pls explain
-    self.gravityButton = [[%c(AVButton) alloc] init]; // person.crop.rectangle lol
+    self.pipButton2 = [[%c(AVButton) alloc] init];
+    [self.pipButton2 setImage:[UIImage systemImageNamed:@"pip" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.pipButton2.imageView setTintColor:UIColor.whiteColor];
+    [self.pipButton2 addTarget:self 
+               action:@selector(pipButtonPressed)
+               forControlEvents:UIControlEventTouchUpInside];
+    self.pipButton2.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.pipButton3 = [[%c(AVButton) alloc] init];
+    [self.pipButton3 setImage:[UIImage systemImageNamed:@"pip" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.pipButton3.imageView setTintColor:UIColor.whiteColor];
+    [self.pipButton3 addTarget:self 
+               action:@selector(pipButtonPressed)
+               forControlEvents:UIControlEventTouchUpInside];
+    self.pipButton3.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.gravityButton = [[%c(AVButton) alloc] init]; // person.crop.rectangle lol   I ~~couldn't~~ didn't want to reuse the original image for various reasons, mainly because it wasn't a standard SFSymbol
     [self.gravityButton setImage:[UIImage systemImageNamed:@"person.crop.rectangle" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
     [self.gravityButton.imageView setTintColor:UIColor.whiteColor];
     [self.gravityButton addTarget:self 
                    action:@selector(gravityButtonPressed)
                    forControlEvents:UIControlEventTouchUpInside];
     self.gravityButton.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.gravityButton2 = [[%c(AVButton) alloc] init]; // person.crop.rectangle lol   I ~~couldn't~~ didn't want to reuse the original image for various reasons, mainly because it wasn't a standard SFSymbol
+    [self.gravityButton2 setImage:[UIImage systemImageNamed:@"person.crop.rectangle" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.gravityButton2.imageView setTintColor:UIColor.whiteColor];
+    [self.gravityButton2 addTarget:self 
+                   action:@selector(gravityButtonPressed)
+                   forControlEvents:UIControlEventTouchUpInside];
+    self.gravityButton2.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.gravityButton3 = [[%c(AVButton) alloc] init]; // person.crop.rectangle lol   I ~~couldn't~~ didn't want to reuse the original image for various reasons, mainly because it wasn't a standard SFSymbol
+    [self.gravityButton3 setImage:[UIImage systemImageNamed:@"person.crop.rectangle" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.gravityButton3.imageView setTintColor:UIColor.whiteColor];
+    [self.gravityButton3 addTarget:self 
+                   action:@selector(gravityButtonPressed)
+                   forControlEvents:UIControlEventTouchUpInside];
+    self.gravityButton3.translatesAutoresizingMaskIntoConstraints = NO;
 
     self.airplayButton = [[%c(AVButton) alloc] init];
     [self.airplayButton setImage:[UIImage systemImageNamed:@"airplayvideo" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
@@ -135,6 +184,49 @@
                    forControlEvents:UIControlEventTouchUpInside];
     self.airplayButton.translatesAutoresizingMaskIntoConstraints = NO;
 
+    self.airplayButton2 = [[%c(AVButton) alloc] init];
+    [self.airplayButton2 setImage:[UIImage systemImageNamed:@"airplayvideo" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.airplayButton2.imageView setTintColor:UIColor.whiteColor];
+    [self.airplayButton2 addTarget:self 
+                   action:@selector(airplayButtonPressed)
+                   forControlEvents:UIControlEventTouchUpInside];
+    self.airplayButton2.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.airplayButton3 = [[%c(AVButton) alloc] init];
+    [self.airplayButton3 setImage:[UIImage systemImageNamed:@"airplayvideo" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.airplayButton3.imageView setTintColor:UIColor.whiteColor];
+    [self.airplayButton3 addTarget:self 
+                   action:@selector(airplayButtonPressed)
+                   forControlEvents:UIControlEventTouchUpInside];
+    self.airplayButton3.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.orientationButton = [[%c(AVButton) alloc] init];
+    [self.orientationButton setImage:[UIImage systemImageNamed:@"lock.rotation" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.orientationButton setImage:[UIImage systemImageNamed:@"lock.rotation.open" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateSelected];
+    [self.orientationButton.imageView setTintColor:UIColor.whiteColor];
+    [self.orientationButton addTarget:self 
+                   action:@selector(orientationButtonPressed:)
+                   forControlEvents:UIControlEventTouchUpInside];
+    self.orientationButton.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.orientationButton2 = [[%c(AVButton) alloc] init];
+    [self.orientationButton2 setImage:[UIImage systemImageNamed:@"lock.rotation" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.orientationButton2 setImage:[UIImage systemImageNamed:@"lock.rotation.open" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateSelected];
+    [self.orientationButton2.imageView setTintColor:UIColor.whiteColor];
+    [self.orientationButton2 addTarget:self 
+                   action:@selector(orientationButtonPressed:)
+                   forControlEvents:UIControlEventTouchUpInside];
+    self.orientationButton2.translatesAutoresizingMaskIntoConstraints = NO;
+
+    self.orientationButton3 = [[%c(AVButton) alloc] init];
+    [self.orientationButton3 setImage:[UIImage systemImageNamed:@"lock.rotation" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
+    [self.orientationButton3 setImage:[UIImage systemImageNamed:@"lock.rotation.open" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateSelected];
+    [self.orientationButton3.imageView setTintColor:UIColor.whiteColor];
+    [self.orientationButton3 addTarget:self 
+                   action:@selector(orientationButtonPressed:)
+                   forControlEvents:UIControlEventTouchUpInside];
+    self.orientationButton3.translatesAutoresizingMaskIntoConstraints = NO;
+
     self.closeButton = [[%c(AVButton) alloc] init];
     [self.closeButton setImage:[UIImage systemImageNamed:@"xmark" withConfiguration:[UIImageSymbolConfiguration configurationWithPointSize:20 weight:UIImageSymbolWeightRegular scale:UIImageSymbolScaleMedium]]forState:UIControlStateNormal];
     [self.closeButton.imageView setTintColor:UIColor.whiteColor];
@@ -143,11 +235,77 @@
                  forControlEvents:UIControlEventTouchUpInside];
     self.closeButton.translatesAutoresizingMaskIntoConstraints = NO;
 
-    for (UIView *view in @[self.pipButton, self.closeButton, self.airplayButton, self.gravityButton]) [self addSubview:view];
+    UIStackView *buttonsStack = [[UIStackView alloc] init];
+    buttonsStack.axis = UILayoutConstraintAxisHorizontal;
+    buttonsStack.distribution = UIStackViewDistributionFillEqually;
+    buttonsStack.translatesAutoresizingMaskIntoConstraints = NO;
 
-    [self.pipButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
-    [self.gravityButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.pipButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
-    [self.airplayButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.gravityButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+    [self addSubview:buttonsStack];
+    [self addSubview:self.closeButton];
+    // for (UIView *view in @[self.pipButton, self.airplayButton, self.gravityButton]) [self addSubview:view];
+    // for (UIView *view in @[self.pipButton, self.airplayButton, self.gravityButton]) [buttonsStack addArrangedSubview:view];
+
+
+    // I start all of the switches off at 1 instead of 0 because I originally had a 0 case if you wanted the button to not show at all, but I realized it looked back design wise, so I just force you to chose which button you want
+
+    // This is a mess
+    switch (buttonOneStyle) {
+      case 1:
+        [buttonsStack addArrangedSubview:self.gravityButton];
+        break;
+      case 2:
+        [buttonsStack addArrangedSubview:self.airplayButton];
+        break;
+      case 3:
+        [buttonsStack addArrangedSubview:self.pipButton];
+        break;
+      // case 4:
+      //   [buttonsStack addArrangedSubview:self.orientationButton];
+      //   break;
+      default:
+        break;
+    }
+
+    switch (buttonTwoStyle) {
+      case 1:
+        [buttonsStack addArrangedSubview:self.gravityButton2];
+        break;
+      case 2:
+        [buttonsStack addArrangedSubview:self.airplayButton2];
+        break;
+      case 3:
+        [buttonsStack addArrangedSubview:self.pipButton2];
+        break;
+      // case 4:
+      //   [buttonsStack addArrangedSubview:self.orientationButton2];
+      //   break;
+      default:
+        break;
+    }
+
+    switch (buttonThreeStyle) {
+      case 1:
+        [buttonsStack addArrangedSubview:self.gravityButton3];
+        break;
+      case 2:
+        [buttonsStack addArrangedSubview:self.airplayButton3];
+        break;
+      case 3:
+        [buttonsStack addArrangedSubview:self.pipButton3];
+        break;
+      // case 4:
+      //   [buttonsStack addArrangedSubview:self.orientationButton3];
+      //   break;
+      default:
+        break;
+    }
+
+    [buttonsStack anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(150, 40)];
+    // [self.pipButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+    // [self.gravityButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.pipButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+    // [self.airplayButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.gravityButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+
+    
     [self.closeButton anchorTop:self.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:nil trailing:nil padding:UIEdgeInsetsMake(0, 15, 15, 0) size:CGSizeMake(40, 40)];
 
     [self addSubview:self.scrubber];
@@ -266,6 +424,12 @@
 -(void)airplayButtonPressed {
   [[NSNotificationCenter defaultCenter] postNotificationName:@"airplayButton" object:self];
 }
+// %new
+// -(void)orientationButtonPressed:(UIButton *)sender {
+//   sender.selected = !sender.selected;
+//   lockOrientation();
+//   NSLog(@"hi");
+// }
 %new
 -(void)leftGesture {
   if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
@@ -388,7 +552,9 @@
   // It just checks which side of the screen the touch point came from
 
   if (arg1.state == UIGestureRecognizerStateEnded) {
-    CGPoint point = [arg1 locationInView:self.view.superview.superview.superview];
+    // CGPoint point = [arg1 locationInView:self.view.superview.superview.superview]; // This works
+    // CGPoint point = [arg1 locationInView:self.view.superview]; // This works in the appleTV app
+    CGPoint point = [arg1 locationInView:self.view];
     CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
     if (point.x < (screenWidth/2)) {
       // Left
@@ -418,6 +584,9 @@
   [preferences registerBool:&enabled default:YES forKey:@"enabled"];
   [preferences registerBool:&gestureEnabled default:YES forKey:@"gestureEnabled"];
   [preferences registerBool:&animEnabled default:YES forKey:@"animEnabled"];
+  [preferences registerInteger:&buttonOneStyle default:2 forKey:@"buttonOne"];
+  [preferences registerInteger:&buttonTwoStyle default:1 forKey:@"buttonTwo"];
+  [preferences registerInteger:&buttonThreeStyle default:3 forKey:@"buttonThree"];
   if (enabled) {
     %init(Atlas);
   }

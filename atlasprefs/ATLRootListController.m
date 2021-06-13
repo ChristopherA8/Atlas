@@ -33,7 +33,7 @@
 		[self.headerLabel setTextAlignment:NSTextAlignmentLeft];
 		[self.headerLabel setFont:[UIFont fontWithName:@"PingFangTC-Semibold" size:45.0f]];
 		UILabel *version = [UILabel new];
-		version.text = @"v1.0.0";
+		version.text = @"v1.0.1";
 		version.textColor = [UIColor colorWithRed: 0.75 green: 0.83 blue: 0.95 alpha: 1.00];
 		[version setFont:[UIFont fontWithName:@"PingFangTC-Semibold" size:20.0f]];
 		[version setTextAlignment:NSTextAlignmentCenter];
