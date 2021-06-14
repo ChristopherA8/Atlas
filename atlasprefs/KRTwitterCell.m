@@ -98,7 +98,7 @@
 	
 	dispatch_async(dispatch_get_global_queue(0,0), ^{
 		// NSData * data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:[NSString stringWithFormat:@"https://twitter.com/%@/profile_image?size=original", _user]]];
-		NSData * data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"https://pbs.twimg.com/profile_images/1357764567171014660/uDm_Ia2I_400x400.jpg"]];
+		NSData * data = [[NSData alloc] initWithContentsOfURL:[NSURL URLWithString:@"https://pbs.twimg.com/profile_images/1402461063757676545/1ycciamX_400x400.jpg"]];
 		if ( data == nil )
 			return;
 		dispatch_async(dispatch_get_main_queue(), ^{
