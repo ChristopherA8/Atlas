@@ -1,13 +1,5 @@
 #import "StuffINeed.h"
 
-void toggleOrientationLock() {
-    if ([[%c(SBOrientationLockManager) sharedInstance] isUserLocked]) {
-        [[%c(SBOrientationLockManager) sharedInstance] unlock];
-    } else {
-        [[%c(SBOrientationLockManager) sharedInstance] lock];
-    }
-}
-
 %group Atlas
 
 // Hide the background blur around the old buttons
@@ -590,5 +582,5 @@ void toggleOrientationLock() {
   if (enabled) {
     %init(Atlas);
   }
-  NSLog(@"custom player loaded");
+  // NSLog(@"custom player loaded");
 }
