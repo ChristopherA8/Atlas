@@ -45,12 +45,14 @@
 			<string>com.chr1s.atlasprefs/ReloadPrefs</string>
 			<key>validTitles</key>
 				<array>
+					<string>None</string>
 					<string>Window Resize</string>
 					<string>Airplay</string>
 					<string>Picture In Picture</string>
 				</array>
 			<key>validValues</key>
 				<array>
+					<integer>0</integer>
 					<integer>1</integer>
 					<integer>2</integer>
 					<integer>3</integer>
@@ -73,12 +75,14 @@
 			<string>com.chr1s.atlasprefs/ReloadPrefs</string>
 			<key>validTitles</key>
 				<array>
+					<string>None</string>
 					<string>Window Resize</string>
 					<string>Airplay</string>
 					<string>Picture In Picture</string>
 				</array>
 			<key>validValues</key>
 				<array>
+					<integer>0</integer>
 					<integer>1</integer>
 					<integer>2</integer>
 					<integer>3</integer>
@@ -101,12 +105,14 @@
 			<string>com.chr1s.atlasprefs/ReloadPrefs</string>
 			<key>validTitles</key>
 				<array>
+					<string>None</string>
 					<string>Window Resize</string>
 					<string>Airplay</string>
 					<string>Picture In Picture</string>
 				</array>
 			<key>validValues</key>
 				<array>
+					<integer>0</integer>
 					<integer>1</integer>
 					<integer>2</integer>
 					<integer>3</integer>

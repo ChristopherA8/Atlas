@@ -170,3 +170,17 @@ doubleTap.numberOfTapsRequired = 2;
 //           showing = YES;
 
 // }
+
+// Hide the background blur around the old buttons
+%
+    hook AVCABackdropLayerView
+    // -(BOOL)isHidden {
+    //   return YES;
+    // }
+    // -(void)setHidden:(BOOL)hidden {
+    //   %orig(YES);
+    // }
+    // -(void)layoutSubviews {
+    //   self.hidden = YES;
+    // }
+    % end

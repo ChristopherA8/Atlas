@@ -1,18 +1,15 @@
-// Yes this is called StuffINeed.h
-
+#import "UIView+Constraints.h"
+#import <AVFoundation/AVFoundation.h>
 #import <Cephei/HBPreferences.h>
 
-HBPreferences *preferences;
+static HBPreferences *preferences;
 BOOL enabled;
 BOOL gestureEnabled;
 BOOL animEnabled;
 
-NSInteger buttonOneStyle = 2;
-NSInteger buttonTwoStyle = 1;
-NSInteger buttonThreeStyle = 3;
-
-#import "UIView+Constraints.h"
-#import <AVFoundation/AVFoundation.h>
+static NSInteger buttonOneStyle = 2;
+static NSInteger buttonTwoStyle = 1;
+static NSInteger buttonThreeStyle = 3;
 
 @interface AVButton : UIButton
 @property(nonatomic, retain) UIVisualEffectView *backgroundEffectView;
@@ -44,8 +41,6 @@ NSInteger buttonThreeStyle = 3;
 @interface AVPlaybackControlsRoutePickerView : AVRoutePickerView
 @end
 
-// BOOL showing;
-
 @interface AVTransportControlsView : UIView
 @property(assign, nonatomic) AVButton *standardPlayPauseButton;
 @property(nonatomic, readonly) AVScrubber *scrubber;
@@ -76,9 +71,9 @@ NSInteger buttonThreeStyle = 3;
 @property(nonatomic, retain) AVButton *airplayButton3;
 @property(nonatomic, retain) AVButton *orientationButton3;
 
-@property (nonatomic, retain) UIView *numberView;
-@property (nonatomic, retain) UILabel *leftNumber;
-@property (nonatomic, retain) UILabel *rightNumber;
+@property(nonatomic, retain) UIView *numberView;
+@property(nonatomic, retain) UILabel *leftNumber;
+@property(nonatomic, retain) UILabel *rightNumber;
 
 - (id)initWithFrame:(CGRect)arg1 styleSheet:(id)arg2;
 - (void)_layoutDoubleRowViews;
@@ -97,8 +92,8 @@ NSInteger buttonThreeStyle = 3;
 - (void)airplayButtonPressed;
 - (void)orientationButtonPressed:(UIButton *)sender;
 
--(void)leftGesture;
--(void)rightGesture;
+- (void)leftGesture;
+- (void)rightGesture;
 @end
 
 @interface AVPlaybackControlsView : UIView
@@ -125,9 +120,9 @@ NSInteger buttonThreeStyle = 3;
 
 // Orientation Lock
 @interface SBOrientationLockManager
-+(instancetype)sharedInstance;
--(id)description;
--(BOOL)isUserLocked;
--(void)lock;
--(void)unlock;
++ (instancetype)sharedInstance;
+- (id)description;
+- (BOOL)isUserLocked;
+- (void)lock;
+- (void)unlock;
 @end

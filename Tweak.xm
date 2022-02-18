@@ -1,18 +1,12 @@
-#import "StuffINeed.h"
+#import "Tweak.h"
 
 %group Atlas
-
-// Hide the background blur around the old buttons
-%hook AVCABackdropLayerView
--(void)layoutSubviews {
-  self.hidden = YES;
-}
-%end
 
 // Hide everything from the old layout
 %hook AVLayoutView
 -(void)layoutSubviews {
   self.hidden = YES;
+  // ik ik but I swear overriding the "hidden" getter/setter didn't work. Take that as you will
 }
 %end
 
@@ -59,7 +53,7 @@
     self.darkOverlay.backgroundColor = UIColor.blackColor;
     [self addSubview:self.darkOverlay];
 
-    [self.darkOverlay anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsZero size:CGSizeZero];
+    [self.darkOverlay atlas_anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsZero size:CGSizeZero];
 
     // This is just being used to anchor the other views and can be removed, now that I shoved everything into a single class
     self.anchorCenterItem = [[%c(AVButton) alloc] init]; // This was the old playPause button, before I just repurposed the old one
@@ -100,20 +94,20 @@
     // I use self.superview.superview.superview a lot in this project, but I don't even know what it is
     // It just happened to have bounds that fit the whole screen so I used it
     // CODING 100
-    [self.anchorCenterItem centerInView:self.superview.superview.superview];
-    [self.anchorCenterItem heightWidthAnchorsEqualToSize:CGSizeMake(30, 30)];
+    [self.anchorCenterItem atlas_centerInView:self.superview.superview.superview];
+    [self.anchorCenterItem atlas_heightWidthAnchorsEqualToSize:CGSizeMake(30, 30)];
 
     // UIView extensions for constraints are pog
     // making UIs without them would be such a pain
     // feel free to steal my UIView+Constrinats.h/.m files
-    [self.rewindButton anchorTop:self.anchorCenterItem.topAnchor
+    [self.rewindButton atlas_anchorTop:self.anchorCenterItem.topAnchor
                     leading:nil
                     bottom:self.anchorCenterItem.bottomAnchor
                   trailing:self.anchorCenterItem.leadingAnchor
                     padding:UIEdgeInsetsMake(0, 0, 0, 25)
                       size:CGSizeMake(30, 30)];
 
-    [self.fastforwardButton anchorTop:self.anchorCenterItem.topAnchor
+    [self.fastforwardButton atlas_anchorTop:self.anchorCenterItem.topAnchor
                         leading:self.anchorCenterItem.trailingAnchor
                           bottom:self.anchorCenterItem.bottomAnchor
                         trailing:nil
@@ -234,14 +228,12 @@
 
     [self addSubview:buttonsStack];
     [self addSubview:self.closeButton];
-    // for (UIView *view in @[self.pipButton, self.airplayButton, self.gravityButton]) [self addSubview:view];
-    // for (UIView *view in @[self.pipButton, self.airplayButton, self.gravityButton]) [buttonsStack addArrangedSubview:view];
 
-
-    // I start all of the switches off at 1 instead of 0 because I originally had a 0 case if you wanted the button to not show at all, but I realized it looked back design wise, so I just force you to chose which button you want
-
-    // This is a mess
     switch (buttonOneStyle) {
+      case 0:
+        [buttonsStack addArrangedSubview:self.gravityButton];
+        self.gravityButton.alpha = 0;
+        break;
       case 1:
         [buttonsStack addArrangedSubview:self.gravityButton];
         break;
@@ -259,6 +251,9 @@
     }
 
     switch (buttonTwoStyle) {
+      case 0:
+        [buttonsStack addArrangedSubview:self.gravityButton2];
+        self.gravityButton2.alpha = 0;
       case 1:
         [buttonsStack addArrangedSubview:self.gravityButton2];
         break;
@@ -276,6 +271,9 @@
     }
 
     switch (buttonThreeStyle) {
+      case 0:
+        [buttonsStack addArrangedSubview:self.gravityButton3];
+        self.gravityButton3.alpha = 0;
       case 1:
         [buttonsStack addArrangedSubview:self.gravityButton3];
         break;
@@ -292,13 +290,13 @@
         break;
     }
 
-    [buttonsStack anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(150, 40)];
-    // [self.pipButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
-    // [self.gravityButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.pipButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
-    // [self.airplayButton anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.gravityButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+    [buttonsStack atlas_anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(150, 40)];
+    // [self.pipButton atlas_anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+    // [self.gravityButton atlas_anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.pipButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
+    // [self.airplayButton atlas_anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.gravityButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
 
     
-    [self.closeButton anchorTop:self.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:nil trailing:nil padding:UIEdgeInsetsMake(0, 15, 15, 0) size:CGSizeMake(40, 40)];
+    [self.closeButton atlas_anchorTop:self.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:nil trailing:nil padding:UIEdgeInsetsMake(0, 15, 15, 0) size:CGSizeMake(40, 40)];
 
     [self addSubview:self.scrubber];
     [self addSubview:self.elapsedTimeLabel];
@@ -306,27 +304,27 @@
     [self addSubview:self.standardPlayPauseButton];
     [self addSubview:self.liveBroadcastLabel];
     self.standardPlayPauseButton.translatesAutoresizingMaskIntoConstraints = NO;
-    [self.standardPlayPauseButton centerInView:self.superview.superview.superview];
-    [self.standardPlayPauseButton heightWidthAnchorsEqualToSize:CGSizeMake(30, 30)];
-    [self.scrubber anchorTop:nil 
+    [self.standardPlayPauseButton atlas_centerInView:self.superview.superview.superview];
+    [self.standardPlayPauseButton atlas_heightWidthAnchorsEqualToSize:CGSizeMake(30, 30)];
+    [self.scrubber atlas_anchorTop:nil 
                    leading:self.leadingAnchor
                    bottom:self.bottomAnchor
                    trailing:self.trailingAnchor
                    padding:UIEdgeInsetsMake(0, 10, 0, 10)
                    size:CGSizeMake(0,40)];
-    [self.elapsedTimeLabel anchorTop:nil 
+    [self.elapsedTimeLabel atlas_anchorTop:nil 
                            leading:self.scrubber.leadingAnchor 
                            bottom:self.scrubber.topAnchor
                            trailing:nil
                            padding:UIEdgeInsetsMake(0, 0, 0, 0)
                            size:CGSizeMake(80,20)];
-    [self.timeRemainingLabel anchorTop:nil 
+    [self.timeRemainingLabel atlas_anchorTop:nil 
                              leading:nil
                              bottom:self.scrubber.topAnchor
                              trailing:self.scrubber.trailingAnchor
           padding:UIEdgeInsetsMake(0, 0, 0, 0)
               size:CGSizeMake(80,20)];
-    [self.liveBroadcastLabel anchorTop:nil 
+    [self.liveBroadcastLabel atlas_anchorTop:nil 
                              leading:self.leadingAnchor
                              bottom:self.bottomAnchor
                              trailing:self.trailingAnchor
@@ -339,7 +337,7 @@
     self.numberView.userInteractionEnabled = NO;
     self.numberView.backgroundColor = UIColor.clearColor;
     [self addSubview:self.numberView];
-    [self.numberView anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsZero size:CGSizeZero];
+    [self.numberView atlas_anchorTop:self.superview.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:self.superview.superview.superview.bottomAnchor trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsZero size:CGSizeZero];
 
     self.leftNumber = [UILabel new];
     self.leftNumber.font = [UIFont boldSystemFontOfSize:20];
@@ -348,7 +346,7 @@
     self.leftNumber.textColor = UIColor.whiteColor;
     [self.leftNumber setTextAlignment:NSTextAlignmentLeft];
     [self.numberView addSubview:self.leftNumber];
-    [self.leftNumber anchorTop:self.numberView.topAnchor leading:self.numberView.leadingAnchor bottom:self.numberView.bottomAnchor trailing:nil padding:UIEdgeInsetsMake(0,40,0,0) size:CGSizeMake(80, 0)];
+    [self.leftNumber atlas_anchorTop:self.numberView.topAnchor leading:self.numberView.leadingAnchor bottom:self.numberView.bottomAnchor trailing:nil padding:UIEdgeInsetsMake(0,40,0,0) size:CGSizeMake(80, 0)];
 
     self.rightNumber = [UILabel new];
     self.rightNumber.font = [UIFont boldSystemFontOfSize:20];
@@ -357,7 +355,7 @@
     self.rightNumber.textColor = UIColor.whiteColor;
     [self.rightNumber setTextAlignment:NSTextAlignmentRight];
     [self.numberView addSubview:self.rightNumber];
-    [self.rightNumber anchorTop:self.numberView.topAnchor leading:nil bottom:self.numberView.bottomAnchor trailing:self.numberView.trailingAnchor padding:UIEdgeInsetsMake(0,0,0,40) size:CGSizeMake(80, 0)];
+    [self.rightNumber atlas_anchorTop:self.numberView.topAnchor leading:nil bottom:self.numberView.bottomAnchor trailing:self.numberView.trailingAnchor padding:UIEdgeInsetsMake(0,0,0,40) size:CGSizeMake(80, 0)];
 
     // If we're livestreaming, don't show the slider controls
     if (!self.showsLiveStreamingControls) {
@@ -371,9 +369,6 @@
     self.rewindButton.alpha = 1;
     self.fastforwardButton.alpha = 1;
     self.closeButton.alpha = 1;
-    self.airplayButton.alpha = 1;
-    self.pipButton.alpha = 1;
-    self.gravityButton.alpha = 1;
     self.scrubber.alpha = 1;
     self.elapsedTimeLabel.alpha = 1;
     self.timeRemainingLabel.alpha = 1;
@@ -546,7 +541,7 @@
   if (arg1.state == UIGestureRecognizerStateEnded) {
     // CGPoint point = [arg1 locationInView:self.view.superview.superview.superview]; // This works
     // CGPoint point = [arg1 locationInView:self.view.superview]; // This works in the appleTV app
-    CGPoint point = [arg1 locationInView:self.view];
+    CGPoint point = [arg1 locationInView:self.view]; // Ig this works everywhere
     CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
     if (point.x < (screenWidth/2)) {
       // Left
@@ -569,8 +564,6 @@
 
 %end
 
-
-// This is here as a sanity check, so I know if I spelled the dylib path correctly in the console search bar
 %ctor {
   preferences = [[HBPreferences alloc] initWithIdentifier:@"com.chr1s.atlasprefs"];
   [preferences registerBool:&enabled default:YES forKey:@"enabled"];
@@ -582,5 +575,4 @@
   if (enabled) {
     %init(Atlas);
   }
-  // NSLog(@"custom player loaded");
 }
