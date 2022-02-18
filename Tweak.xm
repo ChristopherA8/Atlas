@@ -1,5 +1,14 @@
 #import "Tweak.h"
 
+BOOL isPortrait() {
+  for (UIWindow *window in [[UIApplication sharedApplication] windows]) {
+    if (window.isKeyWindow) {
+      return UIDeviceOrientationIsPortrait(window.windowScene.interfaceOrientation);
+    }
+  }
+  return NO;
+}
+
 %group Atlas
 
 // Hide everything from the old layout
@@ -342,7 +351,7 @@
     self.leftNumber = [UILabel new];
     self.leftNumber.font = [UIFont boldSystemFontOfSize:20];
     self.leftNumber.userInteractionEnabled = NO;
-    self.leftNumber.text = @"-15";
+    self.leftNumber.text = [NSString stringWithFormat:@"-%ld", backSeconds];
     self.leftNumber.textColor = UIColor.whiteColor;
     [self.leftNumber setTextAlignment:NSTextAlignmentLeft];
     [self.numberView addSubview:self.leftNumber];
@@ -351,7 +360,7 @@
     self.rightNumber = [UILabel new];
     self.rightNumber.font = [UIFont boldSystemFontOfSize:20];
     self.rightNumber.userInteractionEnabled = NO;
-    self.rightNumber.text = @"+15";
+    self.rightNumber.text = [NSString stringWithFormat:@"+%ld", aheadSeconds];
     self.rightNumber.textColor = UIColor.whiteColor;
     [self.rightNumber setTextAlignment:NSTextAlignmentRight];
     [self.numberView addSubview:self.rightNumber];
@@ -419,7 +428,7 @@
 // }
 %new
 -(void)leftGesture {
-  if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+  if (isPortrait()) {
     self.leftNumber.font = [UIFont boldSystemFontOfSize:20];
   } else {
     self.leftNumber.font = [UIFont boldSystemFontOfSize:30];
@@ -448,7 +457,7 @@
 }
 %new
 -(void)rightGesture {
-  if (UIDeviceOrientationIsPortrait([UIDevice currentDevice].orientation)) {
+  if (isPortrait()) {
     self.rightNumber.font = [UIFont boldSystemFontOfSize:20];
   } else {
     self.rightNumber.font = [UIFont boldSystemFontOfSize:30];
@@ -502,8 +511,8 @@
 %hook AVPlayerViewController
 -(id)initWithPlayerLayerView:(id)arg1 {
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(doneButtonTapped:) name:@"doneButtonFromCustomButton" object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleSkipAhead15SecondsKeyCommand:) name:@"skipAhead" object:nil];
-	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleSkipBack15SecondsKeyCommand:) name:@"skipBack" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleSkipAhead) name:@"skipAhead" object:nil];
+	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(_handleSkipBack) name:@"skipBack" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(pictureInPictureButtonTapped:) name:@"pipButton" object:nil];
 	[[NSNotificationCenter defaultCenter] addObserver:self selector:@selector(videoGravityButtonTapped:) name:@"videoGravityButton" object:nil];  
   return %orig;
@@ -519,6 +528,34 @@
 -(void)_handleSkipAhead15SecondsKeyCommand:(id)arg1 {
   // NSLog(@"_handleSkipAhead15SecondsKeyCommand");
   %orig;
+}
+%new
+-(void)_handleSkipAhead {
+  AVPlayerController *playerController = [self playerController];
+
+  // requiresLinearPlayback is YES for unskippable videos
+  if (self.requiresLinearPlayback == NO) {
+    if ([playerController respondsToSelector:@selector(seekByTimeInterval:toleranceBefore:toleranceAfter:)]) {
+      [playerController seekByTimeInterval:aheadSeconds toleranceBefore:0.5 toleranceAfter:0.5];
+    } else {
+      double currentTime = [playerController currentTime];
+      [playerController seekToTime:currentTime + aheadSeconds];
+    }
+  }
+}
+%new
+-(void)_handleSkipBack {
+  AVPlayerController *playerController = [self playerController];
+
+  // requiresLinearPlayback is YES for unskippable videos
+  if (self.requiresLinearPlayback == NO) {
+    if ([playerController respondsToSelector:@selector(seekByTimeInterval:toleranceBefore:toleranceAfter:)]) {
+      [playerController seekByTimeInterval:-(backSeconds) toleranceBefore:0.5 toleranceAfter:0.5];
+    } else {
+      double currentTime = [playerController currentTime];
+      [playerController seekToTime:currentTime - backSeconds];
+    }
+  }
 }
 -(void)pictureInPictureButtonTapped:(id)arg1 {
   // NSLog(@"pictureInPictureButtonTapped");
@@ -545,12 +582,12 @@
     CGFloat screenWidth = [[UIScreen mainScreen] bounds].size.width;
     if (point.x < (screenWidth/2)) {
       // Left
-      [self _handleSkipBack15SecondsKeyCommand:nil];
+      [self _handleSkipBack];
       // Show the -15
       if (animEnabled) [[NSNotificationCenter defaultCenter] postNotificationName:@"leftGesture" object:self];
     } else {
       // Right
-      [self _handleSkipAhead15SecondsKeyCommand:nil];
+      [self _handleSkipAhead];
       // Show the +15
       if (animEnabled) [[NSNotificationCenter defaultCenter] postNotificationName:@"rightGesture" object:self];
     }
@@ -572,7 +609,8 @@
   [preferences registerInteger:&buttonOneStyle default:2 forKey:@"buttonOne"];
   [preferences registerInteger:&buttonTwoStyle default:1 forKey:@"buttonTwo"];
   [preferences registerInteger:&buttonThreeStyle default:3 forKey:@"buttonThree"];
-  if (enabled) {
-    %init(Atlas);
-  }
+  [preferences registerInteger:&aheadSeconds default:15 forKey:@"skipAhead"];
+  [preferences registerInteger:&backSeconds default:15 forKey:@"skipBack"];
+
+  if (enabled) %init(Atlas);
 }

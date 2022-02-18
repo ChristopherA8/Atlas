@@ -11,6 +11,9 @@ static NSInteger buttonOneStyle = 2;
 static NSInteger buttonTwoStyle = 1;
 static NSInteger buttonThreeStyle = 3;
 
+NSInteger aheadSeconds = 15;
+NSInteger backSeconds = 15;
+
 @interface AVButton : UIButton
 @property(nonatomic, retain) UIVisualEffectView *backgroundEffectView;
 @end
@@ -104,13 +107,24 @@ static NSInteger buttonThreeStyle = 3;
 - (void)setFullScreen:(BOOL)arg1;
 @end
 
+@interface AVPlayerController : UIResponder
+- (void)seekByTimeInterval:(double)arg1 toleranceBefore:(double)arg2 toleranceAfter:(double)arg3;
+- (double)currentTime;
+- (void)seekToTime:(double)arg1;
+@end
+
 @interface AVPlayerViewController : UIViewController
-// @property (nonatomic,retain) AVPlayerController * playerController;
+@property (nonatomic, retain) AVPlayerController * playerController;
+@property (nonatomic) BOOL requiresLinearPlayback;
 - (id)initWithPlayerLayerView:(id)arg1;
 - (void)togglePlayback:(id)arg1;
 - (void)doneButtonTapped:(id)arg1;
 - (void)_handleSkipBack15SecondsKeyCommand:(id)arg1;
 - (void)_handleSkipAhead15SecondsKeyCommand:(id)arg1;
+// %new
+-(void)_handleSkipAhead;
+-(void)_handleSkipBack;
+//
 - (void)pictureInPictureButtonTapped:(id)arg1;
 - (void)videoGravityButtonTapped:(id)arg1;
 - (void)_handleSingleTapGesture:(id)arg1;

@@ -152,6 +152,38 @@
 		</dict>
 		<dict>
 			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>keyboard</key>
+			<string>numbers</string>
+			<key>placeholder</key>
+			<string>15</string>
+			<key>isNumeric</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.chr1s.atlasprefs</string>
+			<key>key</key>
+			<string>skipAhead</string>
+			<key>label</key>
+			<string>Skip Ahead (Seconds)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSEditTextCell</string>
+			<key>keyboard</key>
+			<string>numbers</string>
+			<key>placeholder</key>
+			<string>15</string>
+			<key>isNumeric</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.chr1s.atlasprefs</string>
+			<key>key</key>
+			<string>skipBack</string>
+			<key>label</key>
+			<string>Skip Back (Seconds)</string>
+		</dict>
+		<dict>
+			<key>cell</key>
 			<string>PSGroupCell</string>
 			<key>label</key>
 			<string>Links</string>
