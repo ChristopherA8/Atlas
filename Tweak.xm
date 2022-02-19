@@ -518,15 +518,12 @@ BOOL isPortrait() {
   return %orig;
 }
 -(void)doneButtonTapped:(id)arg1 {
-  // NSLog(@"done button tapped");
   %orig;
 }
 -(void)_handleSkipBack15SecondsKeyCommand:(id)arg1 {
-  // NSLog(@"_handleSkipBack15SecondsKeyCommand");
   %orig;
 }
 -(void)_handleSkipAhead15SecondsKeyCommand:(id)arg1 {
-  // NSLog(@"_handleSkipAhead15SecondsKeyCommand");
   %orig;
 }
 %new
