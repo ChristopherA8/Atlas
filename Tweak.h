@@ -16,6 +16,8 @@ NSInteger backSeconds = 15;
 
 @interface AVButton : UIButton
 @property(nonatomic, retain) UIVisualEffectView *backgroundEffectView;
+// -(void)setInlineImageName:(NSString *)arg1 ;
+// -(void)setFullScreenImageName:(NSString *)arg1 ;
 @end
 
 @interface AVView : UIView
@@ -59,6 +61,7 @@ NSInteger backSeconds = 15;
 @property(nonatomic, retain) AVButton *closeButton;
 @property(nonatomic, retain) UIView *darkOverlay;
 
+@property(nonatomic, readonly) AVButton * mediaSelectionButton;
 @property(nonatomic, retain) AVButton *pipButton;
 @property(nonatomic, retain) AVButton *gravityButton;
 @property(nonatomic, retain) AVButton *airplayButton;
@@ -79,6 +82,7 @@ NSInteger backSeconds = 15;
 @property(nonatomic, retain) UILabel *rightNumber;
 
 - (id)initWithFrame:(CGRect)arg1 styleSheet:(id)arg2;
+// - (void)mediaSelectionButtonTapped:(id)arg1;
 - (void)_layoutDoubleRowViews;
 - (void)_layoutSingleRowViews;
 - (void)dealloc;
@@ -94,6 +98,7 @@ NSInteger backSeconds = 15;
 - (void)gravityButtonPressed;
 - (void)airplayButtonPressed;
 - (void)orientationButtonPressed:(UIButton *)sender;
+// - (void)mediaSelectionButtonPressThing;
 
 - (void)leftGesture;
 - (void)rightGesture;

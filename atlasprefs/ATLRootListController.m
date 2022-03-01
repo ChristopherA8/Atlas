@@ -37,7 +37,7 @@
     [self.headerLabel setFont:[UIFont fontWithName:@"PingFangTC-Semibold"
                                               size:45.0f]];
     UILabel *version = [UILabel new];
-    version.text = @"v1.0.2";
+    version.text = @"v1.0.3";
     version.textColor = [UIColor colorWithRed:0.75
                                         green:0.83
                                          blue:0.95

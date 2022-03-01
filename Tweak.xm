@@ -68,8 +68,9 @@ BOOL isPortrait() {
     self.anchorCenterItem = [[%c(AVButton) alloc] init]; // This was the old playPause button, before I just repurposed the old one
     self.anchorCenterItem.translatesAutoresizingMaskIntoConstraints = NO;
 
-    // Make the play button white
+    // Make the play button and subtitle button white
     [self.standardPlayPauseButton.imageView setTintColor:UIColor.whiteColor];
+    [self.mediaSelectionButton.imageView setTintColor:UIColor.whiteColor];
 
     // Rewind button.. pretty self explanatory
     self.rewindButton = [[%c(AVButton) alloc] init];
@@ -230,6 +231,8 @@ BOOL isPortrait() {
                  forControlEvents:UIControlEventTouchUpInside];
     self.closeButton.translatesAutoresizingMaskIntoConstraints = NO;
 
+    self.mediaSelectionButton.translatesAutoresizingMaskIntoConstraints = NO;
+    
     UIStackView *buttonsStack = [[UIStackView alloc] init];
     buttonsStack.axis = UILayoutConstraintAxisHorizontal;
     buttonsStack.distribution = UIStackViewDistributionFillEqually;
@@ -252,6 +255,9 @@ BOOL isPortrait() {
       case 3:
         [buttonsStack addArrangedSubview:self.pipButton];
         break;
+      case 4:
+        [buttonsStack addArrangedSubview:self.mediaSelectionButton];
+        break;
       // case 4:
       //   [buttonsStack addArrangedSubview:self.orientationButton];
       //   break;
@@ -272,6 +278,9 @@ BOOL isPortrait() {
       case 3:
         [buttonsStack addArrangedSubview:self.pipButton2];
         break;
+      // case 4:
+      //   [buttonsStack addArrangedSubview:self.mediaSelectionButton2];
+      //   break;
       // case 4:
       //   [buttonsStack addArrangedSubview:self.orientationButton2];
       //   break;
@@ -420,6 +429,10 @@ BOOL isPortrait() {
 -(void)airplayButtonPressed {
   [[NSNotificationCenter defaultCenter] postNotificationName:@"airplayButton" object:self];
 }
+// %new
+// -(void)mediaSelectionButtonPressThing {
+//   [self mediaSelectionButtonTapped:self];
+// }
 // %new
 // -(void)orientationButtonPressed:(UIButton *)sender {
 //   sender.selected = !sender.selected;
