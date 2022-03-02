@@ -6,6 +6,7 @@ static HBPreferences *preferences;
 BOOL enabled;
 BOOL gestureEnabled;
 BOOL animEnabled;
+BOOL showSubtitlesButton;
 
 static NSInteger buttonOneStyle = 2;
 static NSInteger buttonTwoStyle = 1;

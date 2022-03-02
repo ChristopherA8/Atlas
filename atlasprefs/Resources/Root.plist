@@ -49,7 +49,6 @@
 					<string>Window Resize</string>
 					<string>Airplay</string>
 					<string>Picture In Picture</string>
-					<string>Subtitles</string>
 				</array>
 			<key>validValues</key>
 				<array>
@@ -57,7 +56,6 @@
 					<integer>1</integer>
 					<integer>2</integer>
 					<integer>3</integer>
-					<integer>4</integer>
 				</array>
 			<key>default</key>
 			<integer>2</integer>
@@ -122,6 +120,24 @@
 			<key>default</key>
 			<integer>3</integer>
  		</dict>
+		<dict>
+			<key>cell</key>
+			<string>PSGroupCell</string>
+			<key>label</key>
+			<string>Other Buttons</string>
+		</dict>
+		<dict>
+			<key>cellClass</key>
+			<string>ATLSwitchCell</string>
+			<key>default</key>
+			<true/>
+			<key>defaults</key>
+			<string>com.chr1s.atlasprefs</string>
+			<key>key</key>
+			<string>showSubtitlesButton</string>
+			<key>label</key>
+			<string>Show subtitles button (when applicable)</string>
+		</dict>
 		<dict>
 			<key>cell</key>
 			<string>PSGroupCell</string>

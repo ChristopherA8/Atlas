@@ -241,6 +241,11 @@ BOOL isPortrait() {
     [self addSubview:buttonsStack];
     [self addSubview:self.closeButton];
 
+    // Subtitle button
+    if (showSubtitlesButton) {
+      [buttonsStack addArrangedSubview:self.mediaSelectionButton];
+    }
+
     switch (buttonOneStyle) {
       case 0:
         [buttonsStack addArrangedSubview:self.gravityButton];
@@ -254,9 +259,6 @@ BOOL isPortrait() {
         break;
       case 3:
         [buttonsStack addArrangedSubview:self.pipButton];
-        break;
-      case 4:
-        [buttonsStack addArrangedSubview:self.mediaSelectionButton];
         break;
       // case 4:
       //   [buttonsStack addArrangedSubview:self.orientationButton];
@@ -309,9 +311,6 @@ BOOL isPortrait() {
     }
 
     [buttonsStack atlas_anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(150, 40)];
-    // [self.pipButton atlas_anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.superview.superview.superview.trailingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
-    // [self.gravityButton atlas_anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.pipButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
-    // [self.airplayButton atlas_anchorTop:self.superview.superview.topAnchor leading:nil bottom:nil trailing:self.gravityButton.leadingAnchor padding:UIEdgeInsetsMake(0, 0, 15, 15) size:CGSizeMake(40, 40)];
 
     
     [self.closeButton atlas_anchorTop:self.superview.superview.topAnchor leading:self.superview.superview.superview.leadingAnchor bottom:nil trailing:nil padding:UIEdgeInsetsMake(0, 15, 15, 0) size:CGSizeMake(40, 40)];
@@ -616,6 +615,7 @@ BOOL isPortrait() {
   [preferences registerBool:&enabled default:YES forKey:@"enabled"];
   [preferences registerBool:&gestureEnabled default:YES forKey:@"gestureEnabled"];
   [preferences registerBool:&animEnabled default:YES forKey:@"animEnabled"];
+  [preferences registerBool:&showSubtitlesButton default:YES forKey:@"showSubtitlesButton"];
   [preferences registerInteger:&buttonOneStyle default:2 forKey:@"buttonOne"];
   [preferences registerInteger:&buttonTwoStyle default:1 forKey:@"buttonTwo"];
   [preferences registerInteger:&buttonThreeStyle default:3 forKey:@"buttonThree"];
