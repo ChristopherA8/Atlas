@@ -622,5 +622,5 @@ BOOL isPortrait() {
   [preferences registerInteger:&aheadSeconds default:15 forKey:@"skipAhead"];
   [preferences registerInteger:&backSeconds default:15 forKey:@"skipBack"];
 
-  if (enabled) %init(Atlas);
+  if (enabled && ![NSBundle.mainBundle.bundleIdentifier isEqualToString:@"com.tigisoftware.Filza"]) %init(Atlas);
 }
