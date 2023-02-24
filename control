@@ -1,6 +1,6 @@
 Package: com.chr1s.atlas
 Name: Atlas
-Version: 1.0.3
+Version: 1.0.4
 Architecture: iphoneos-arm
 Description: Minimalistic video player replacement
 Maintainer: Chr1s

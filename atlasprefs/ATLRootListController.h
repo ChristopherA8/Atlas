@@ -17,4 +17,5 @@
 -(void)discord;
 -(void)paypal;
 -(void)sourceCode;
+-(void)website;
 @end

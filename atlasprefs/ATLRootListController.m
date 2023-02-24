@@ -37,7 +37,7 @@
     [self.headerLabel setFont:[UIFont fontWithName:@"PingFangTC-Semibold"
                                               size:45.0f]];
     UILabel *version = [UILabel new];
-    version.text = @"v1.0.3";
+    version.text = @"v1.0.4";
     version.textColor = [UIColor colorWithRed:0.75
                                         green:0.83
                                          blue:0.95
@@ -117,14 +117,22 @@
 }
 
 - (void)paypal {
-  NSURL *paypal = [NSURL URLWithString:@"https://paypal.me/chr1sdev"];
+  NSURL *paypal = [NSURL URLWithString:@"https://paypal.me/Chr1sDev"];
   [[UIApplication sharedApplication] openURL:paypal
                                      options:@{}
                            completionHandler:nil];
 }
 
 - (void)sourceCode {
-  NSURL *source = [NSURL URLWithString:@"https://github.com/Chr1sDev/Atlas"];
+  NSURL *source =
+      [NSURL URLWithString:@"https://github.com/ChristopherA8/Atlas"];
+  [[UIApplication sharedApplication] openURL:source
+                                     options:@{}
+                           completionHandler:nil];
+}
+
+- (void)website {
+  NSURL *source = [NSURL URLWithString:@"https://christopher.jp.net"];
   [[UIApplication sharedApplication] openURL:source
                                      options:@{}
                            completionHandler:nil];
